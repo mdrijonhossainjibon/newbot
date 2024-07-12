@@ -5,14 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Counter Button with Tailwind CSS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for button animation */
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        .bounce {
+            animation: bounce 0.3s;
+        }
+
+        /* Custom CSS for counter animation */
+        @keyframes counterBounce {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        .counter-bounce {
+            animation: counterBounce 0.3s;
+        }
+    </style>
 </head>
 <body class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="text-center">
-        <h1 class="text-2xl font-bold mb-4">Counter: <span id="counter">0</span></h1>
+        <h1 class="text-2xl font-bold mb-4">Counter: <span id="counter" class="inline-block">0</span></h1>
         <button id="incrementButton" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Click me</button>
     </div>
     
     <script>
+        // Function to load the counter value from local storage
+        function loadCounter() {
+            let counter = localStorage.getItem('counter');
+            if (counter === null) {
+                counter = 0;
+            }
+            document.getElementById('counter').innerText = counter;
+        }
+
+        // Function to save the counter value to local storage
+        function saveCounter(counter) {
+            localStorage.setItem('counter', counter);
+        }
+
         // JavaScript to handle the button click
         document.getElementById('incrementButton').addEventListener('click', function() {
             // Get the current counter value
@@ -20,8 +64,31 @@
             // Increment the counter value
             counter = parseInt(counter) + 1;
             // Update the counter display
-            document.getElementById('counter').innerText = counter;
+            const counterElement = document.getElementById('counter');
+            counterElement.innerText = counter;
+            // Save the counter value to local storage
+            saveCounter(counter);
+
+            // Add bounce animation class to the button
+            this.classList.add('bounce');
+            
+            // Remove bounce animation class from the button after animation ends
+            this.addEventListener('animationend', function() {
+                this.classList.remove('bounce');
+            }, { once: true });
+
+            // Add counter-bounce animation class to the counter
+            counterElement.classList.add('counter-bounce');
+            
+            // Remove counter-bounce animation class from the counter after animation ends
+            counterElement.addEventListener('animationend', function() {
+                counterElement.classList.remove('counter-bounce');
+            }, { once: true });
         });
+
+        // Load the counter value when the page loads
+        window.onload = loadCounter;
     </script>
 </body>
 </html>
+
